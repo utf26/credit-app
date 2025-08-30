@@ -1,0 +1,23 @@
+services:
+  app:
+    image: credit_app:latest
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        ELIXIR_IMAGE: elixir:otp-28
+    container_name: credit-app
+    ports:
+      - "4000:4000"
+    volumes:
+      - .:/app
+      - mix-deps:/app/deps
+      - build-cache:/app/_build
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:4000 || exit 1"]
+      interval: 10s
+      timeout: 2s
+      retries: 30
+volumes:
+  mix-deps:
+  build-cache:

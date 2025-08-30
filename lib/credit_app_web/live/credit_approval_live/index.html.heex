@@ -1,0 +1,98 @@
+<section class="container mx-auto p-6">
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h1 class="card-title">Credit Approval</h1>
+
+      <.stepper current={@step} order={@order} labels={@labels} />
+
+      <%!-- Eligibility --%>
+      <%= if @step == :eligibility do %>
+        <.form for={@eligibility_form} phx-submit="submit-eligibility" class="space-y-4">
+          <%= for {key, label, _pts} <- @questions do %>
+            <.input
+              type="select"
+              field={@eligibility_form[key]}
+              label={label}
+              options={[{"No", "no"}, {"Yes", "yes"}]}
+              class="select select-bordered w-full"
+            />
+          <% end %>
+          <div class="card-actions justify-end">
+            <button type="submit" class="btn btn-primary" phx-disable-with="...">Continue</button>
+          </div>
+        </.form>
+      <% end %>
+
+      <%!-- Not eligible --%>
+      <%= if @step == :not_eligible do %>
+        <div class="alert alert-error mb-4" role="alert">
+          <span>Thank you for your answer. We are currently unable to issue credit to you.</span>
+        </div>
+        <div class="card-actions justify-end">
+          <a href={~p"/"} class="btn btn-ghost">Start over</a>
+        </div>
+      <% end %>
+
+      <%!-- Financials --%>
+      <%= if @step == :financials do %>
+        <.form for={@financials_form} phx-submit="submit-financials" class="space-y-4">
+          <.input
+            type="number"
+            field={@financials_form[:income]}
+            label="Total monthly income from all sources (USD)"
+            step="0.01"
+            class="input input-bordered w-full"
+            required
+          />
+          <.input
+            type="number"
+            field={@financials_form[:expenses]}
+            label="Total monthly expenses (USD)"
+            step="0.01"
+            class="input input-bordered w-full"
+            required
+          />
+          <div class="card-actions justify-end">
+            <button type="submit" class="btn btn-primary" phx-disable-with="...">
+              Calculate
+            </button>
+          </div>
+        </.form>
+      <% end %>
+
+      <%!-- Offer --%>
+      <%= if @step == :offer do %>
+        <div role="alert" class="alert alert-success">
+          <span>
+            Congratulations, you have been approved for credit up to <strong>{:erlang.float_to_binary(@credit, decimals: 2)} amount (in USD)</strong>.
+          </span>
+        </div>
+
+        <.form for={@email_form} phx-submit="send-email" class="mt-4">
+          <.input
+            type="email"
+            field={@email_form[:address]}
+            label="Email address"
+            class="input input-bordered w-full"
+            required
+          />
+          <div class="card-actions justify-end">
+            <button type="submit" class="btn btn-secondary" phx-disable-with="...">
+              Send PDF
+            </button>
+          </div>
+        </.form>
+      <% end %>
+
+      <%!-- Email sent --%>
+      <%= if @step == :email do %>
+        <div role="alert" class="alert alert-success">
+          <span>PDF emailed successfully. Please check your inbox.</span>
+        </div>
+        <div class="card-actions justify-end mt-4">
+          <a href={~p"/"} class="btn btn-ghost">Start over</a>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
