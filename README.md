@@ -15,10 +15,7 @@ A minimal, production-ready credit approval flow built with Phoenix LiveView. Us
 - [Configuration](#configuration)
     - [Email (Swoosh)](#email-swoosh)
     - [PDF generation](#pdf-generation)
-    - [Environment variables](#environment-variables)
-- [Testing](#testing)
 - [Troubleshooting](#troubleshooting)
-- [Security & ops notes](#security--ops-notes)
 - [License](#license)
 
 ---
